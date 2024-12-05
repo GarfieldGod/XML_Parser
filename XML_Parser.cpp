@@ -1,9 +1,4 @@
-﻿#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
-
-using namespace std;
+﻿#include "xml_parser.h"
 
 const char LEFT_ANGLE_BRACKET = '<';
 const char RIGHT_ANGLE_BRACKET = '>';
@@ -21,25 +16,6 @@ struct Tag
     vector<string> tagProperty;
     string content;
     int height;
-};
-
-class XmlParser
-{
-public:
-    XmlParser();
-    ~XmlParser();
-
-    string readXmlFileToString(string filePath);
-    void ParserXml(string text, int tagHeight = 0);
-    void printTreeStruct();
-
-private:
-    string getTagName(string text);
-    vector<string> getTagProperty(string text);
-    string getTagContent(string text);
-
-    vector<string> tagProperty_ {"id", "data"};
-    vector<Tag> tags_;
 };
 
 XmlParser::XmlParser() {}
@@ -156,12 +132,4 @@ string XmlParser::getTagContent(string text)
     int nextHeadPos = text.find(LEFT_ANGLE_BRACKET, tagHeadEnd);
     string frontContent = text.substr(tagHeadEnd, nextHeadPos - tagHeadEnd);
     return text.substr(tagHeadEnd + 1, nextHeadPos - tagHeadEnd - 1);
-}
-
-int main()
-{
-    XmlParser xml;
-    string text = xml.readXmlFileToString("test/test0.xml");
-    xml.ParserXml(text);
-    xml.printTreeStruct();
 }
