@@ -1,11 +1,20 @@
 <note>
-    <Require>用C#/C/C++/GO解析这个XML文件，不能用第3方库，不能用C#/C/C++/GO自己的库，字符串需要自己解析。解析完之后，树状打印出来。可以查资料。最后提交代码文件(不要提交工程)</Require>
+    ssss<Require>用C#/C/C++/GO解析这个XML文件，不能用第3方库，不能用C#/C/C++/GO自己的库，字符串需要自己解析。解析完之后，树状打印出来。可以查资料。最后提交代码文件(不要提交工程)</Require>
     <date id="1">
         <day>10</day>
         <month>01</month>
         <year>1008</year>
     </date>
     <date id="2">
+        <day>20</day>
+        <smalltime>
+        <month>02</month>
+        </smalltime>
+        <bigtime>
+            <year>2008</year>
+        </bigtime>
+    </date>
+        <date id="2">
         <day>20</day>
         <month>02</month>
         <year>2008</year>

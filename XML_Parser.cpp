@@ -15,18 +15,10 @@ const char UNDERLINE = '_';
 const char COLON = ':';
 const string WHITE_SPACE = " \t\r\n";
 
-enum TagType {
-    TAG_DEFAULT,
-    TAG_SINGLE,
-    TAG_DOUBLE_STRUCT,
-    TAG_DOUBLE_CONTENT
-};
-
 struct Tag
 {
     string tagName;
     vector<string> tagProperty;
-    TagType type;
     string content;
     int height;
 };
@@ -38,14 +30,14 @@ public:
     ~XmlParser();
 
     string readXmlFileToString(string filePath);
-    void ParserXml(string text);
+    void ParserXml(string text, int tagHeight = 0);
     void printTreeStruct();
 
 private:
-    string getTagName(string xml);
-    vector<string> getTagProperty(string xml);
+    string getTagName(string text);
+    vector<string> getTagProperty(string text);
+    string getTagContent(string text);
 
-    int hight_ = 0;
     vector<string> tagProperty_ {"id", "data"};
     vector<Tag> tags_;
 };
@@ -73,71 +65,39 @@ string XmlParser::readXmlFileToString(string filePath)
     return result;
 }
 
-void XmlParser::ParserXml(string text)
+void XmlParser::ParserXml(string text, int tagHeight)
 {
-    for (int i = 0; i < text.size(); i++)
-    {
-        if (text[i] == LEFT_ANGLE_BRACKET)
+    int tagHeadStart = text.find(LEFT_ANGLE_BRACKET, 0);
+    int tagHeadEnd = text.find(RIGHT_ANGLE_BRACKET, 0);
+    if (tagHeadStart != -1 && tagHeadEnd != -1) {
+        string tagHead = text.substr(tagHeadStart, tagHeadEnd - tagHeadStart + 1);
+
+        string tagName = getTagName(text);
+        vector<string> tagProperty = getTagProperty(tagHead);
+        string content = getTagContent(text);
+        Tag tag = {tagName, tagProperty, content, tagHeight};
+        tags_.push_back(tag);
+        //单标签
+        if (text[tagHeadEnd - 1] == FORWARD_SLASH)
         {
-            for (int t = 1; t < text.size()-1; t++)
-            {
-                if (text[t] == RIGHT_ANGLE_BRACKET) {
-                    string tagHead = text.substr(i + 1, t - i - 1);
-                    string tagName = getTagName(tagHead);
-                    vector<string> tagProperty = getTagProperty(tagHead);
-                    TagType tagType = TAG_DEFAULT;
-                    string content = "";
-                    //单标签
-                    if (text[t - 1] == FORWARD_SLASH)
-                    {
-                        tagType = TAG_SINGLE;
-                        Tag tag = {tagName, tagProperty, tagType, content, hight_};
-                        tags_.push_back(tag);
+            text = text.substr(tagHeadEnd + 1, text.size() - 1);
+            ParserXml(text, tagHeight);
+        //双标签
+        } else {
+            string tagEnd;
+            tagEnd.push_back(LEFT_ANGLE_BRACKET);
+            tagEnd.push_back(FORWARD_SLASH);
+            tagEnd += tagName;
+            tagEnd.push_back(RIGHT_ANGLE_BRACKET);
 
-                        text = text.substr(t + 1, text.size() - 1);
-                        ParserXml(text);
-                    //双标签
-                    } else {
-                        string tagEnd;
-                        tagEnd.push_back(LEFT_ANGLE_BRACKET);
-                        tagEnd.push_back(FORWARD_SLASH);
-                        tagEnd += tagName;
-                        tagEnd.push_back(RIGHT_ANGLE_BRACKET);
-
-                        int tagEndPos = text.find(tagEnd, 0) == -1 ? 0: text.find(tagEnd, 0);
-                        if (tagHead[0] == FORWARD_SLASH)
-                        {
-                            text = text.substr(t + 1,text.size() - 1);
-                            ParserXml(text); break;
-                        }
-                        //无内容标签
-                        if (text[t + 1] == LEFT_ANGLE_BRACKET) {
-                            if (text.find(tagEnd, 0) != t + 1) {
-                                tagType = TAG_DOUBLE_STRUCT;
-                                Tag tag = {tagName, tagProperty, tagType, content, hight_};
-                                tags_.push_back(tag);
-
-                                text = text.substr(t + 1, text.size() - 1);
-                                hight_++;
-                            }
-                        //有内容标签
-                        } else {
-                            if (text.find(tagEnd, 0) != t + 1) {
-                                content = text.substr(t + 1, text.find(tagEnd, 0) - t - 1);
-                                tagType = TAG_DOUBLE_CONTENT;
-                                Tag tag = {tagName, tagProperty, tagType, content, hight_};
-                                tags_.push_back(tag);
-
-                                if (text[text.find(tagEnd, 0) + tagEnd.size() + 1] == FORWARD_SLASH) { hight_--; }
-                                text = text.substr(tagEndPos + tagEnd.size(), text.size() - 1);
-                            }
-                        }
-                        ParserXml(text);
-                    }
-                    break;
-                }
+            int tagEndPos = text.find(tagEnd, 0);
+            if (tagEndPos != -1) {
+                int forwardTextStart = text.find(LEFT_ANGLE_BRACKET, tagHeadEnd);
+                string forwardText = text.substr(forwardTextStart, tagEndPos - forwardTextStart);
+                string backText = text.substr(tagEndPos + tagEnd.size(), text.size() - 1);
+                if (forwardText != "") ParserXml(forwardText, tagHeight + 1);
+                if (backText != "") ParserXml(backText, tagHeight);
             }
-            break;
         }
     }
 }
@@ -160,15 +120,15 @@ void XmlParser::printTreeStruct()
 string XmlParser::getTagName(string text)
 {
     int startPos = 0, endPos = 0;
-    for (int i = 0; i < text.size(); i++) {
-        if (text[i] != LEFT_ANGLE_BRACKET && text[i] != SPACE) {
-            startPos = i;
+    for (int tagHeadStart = 0; tagHeadStart < text.size(); tagHeadStart++) {
+        if (text[tagHeadStart] != LEFT_ANGLE_BRACKET && text[tagHeadStart] != SPACE) {
+            startPos = tagHeadStart;
             break;
         }
     }
-    for (int i = startPos + 1; i <= text.size(); i++) {
-        if (i == text.size() || text[i] == SPACE) {
-            endPos = i;
+    for (int tagHeadStart = startPos + 1; tagHeadStart < text.size(); tagHeadStart++) {
+        if (text[tagHeadStart] == RIGHT_ANGLE_BRACKET || text[tagHeadStart] == SPACE) {
+            endPos = tagHeadStart;
             break;
         }
     }
@@ -181,13 +141,21 @@ vector<string> XmlParser::getTagProperty(string text)
     for (int p = 0; p < tagProperty_.size(); p++) {
         string keyStr = tagProperty_[p] + EQUAL_SIGN + QUOTATION_SIGN;
         if (text.find(keyStr, 0) != -1) {
-            for (int i = text.find(keyStr, 0) + keyStr.size(); i < text.size(); i++) {
-                if (text[i] == QUOTATION_SIGN) break;
-                else properties[p].push_back(text[i]);
+            for (int tagHeadStart = text.find(keyStr, 0) + keyStr.size(); tagHeadStart < text.size(); tagHeadStart++) {
+                if (text[tagHeadStart] == QUOTATION_SIGN) break;
+                else properties[p].push_back(text[tagHeadStart]);
             }
         }
     }
     return properties;
+}
+
+string XmlParser::getTagContent(string text)
+{
+    int tagHeadEnd = text.find(RIGHT_ANGLE_BRACKET, 0);
+    int nextHeadPos = text.find(LEFT_ANGLE_BRACKET, tagHeadEnd);
+    string frontContent = text.substr(tagHeadEnd, nextHeadPos - tagHeadEnd);
+    return text.substr(tagHeadEnd + 1, nextHeadPos - tagHeadEnd - 1);
 }
 
 int main()
