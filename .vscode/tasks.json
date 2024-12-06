@@ -10,7 +10,7 @@
                 "zhml_parser.cpp",
                 "main.cpp",
                 "-o",
-                "${workspaceFolder}\\build\\Debug\\Debug.exe"
+                "${workspaceFolder}\\build\\Debug\\zhml.exe"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

@@ -10,7 +10,7 @@
       "externalConsole": false,
       "cwd": "${cwd}",
       //"program": "${workspaceFolder}/build/Debug/${fileBasenameNoExtension}.exe",
-      "program": "${workspaceFolder}/build/Debug/Debug.exe",
+      "program": "${workspaceFolder}/build/Debug/zhml.exe",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "preLaunchTask": "ZhmlParser Build",
