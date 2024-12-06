@@ -1,0 +1,53 @@
+{
+    "tasks": [
+        {
+            "label": "XmlParser Build",
+            "type": "cppbuild",
+            "command": "g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "xml_parser.cpp",
+                "main.cpp",
+                "-o",
+                "${fileDirname}\\build\\Debug\\Debug.exe"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "XmlParser Build"
+        },
+        {
+            "label": "XmlParser Release",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-O2",
+                "-s",
+                "-o",
+                "${fileDirname}\\build\\Release\\XmlParser.exe",
+                "xml_parser.cpp",
+                "main.cpp",
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "XmlParser Release"
+        }
+    ],
+    "version": "2.0.0"
+}

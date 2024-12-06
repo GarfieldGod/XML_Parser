@@ -10,38 +10,20 @@ const char UNDERLINE = '_';
 const char COLON = ':';
 const string WHITE_SPACE = " \t\r\n";
 
-struct Tag
-{
-    string tagName;
-    vector<string> tagProperty;
-    string content;
-    int height;
-};
-
-XmlParser::XmlParser() {}
+XmlParser::XmlParser(string filePath) {
+    filePath_ = filePath;
+    string text = readXmlFileToString(filePath_);
+    parseXml(text);
+}
 
 XmlParser::~XmlParser() {}
 
-string XmlParser::readXmlFileToString(string filePath)
+vector<Tag> XmlParser::getXmlTags() 
 {
-    ifstream file;
-    file.open(filePath);
-
-    string result;
-    string readLine;
-    while (getline(file, readLine))
-    {
-        int start = readLine.find_first_not_of(WHITE_SPACE);
-        int end = readLine.find_last_not_of(WHITE_SPACE);
-        string invalidLine = readLine.substr(start, end - start + 1);
-        result += invalidLine;
-    }
-    file.close();
-
-    return result;
+    return tags_;
 }
 
-void XmlParser::ParserXml(string text, int tagHeight)
+void XmlParser::parseXml(string text, int tagHeight)
 {
     int tagHeadStart = text.find(LEFT_ANGLE_BRACKET, 0);
     int tagHeadEnd = text.find(RIGHT_ANGLE_BRACKET, 0);
@@ -53,12 +35,12 @@ void XmlParser::ParserXml(string text, int tagHeight)
         string content = getTagContent(text);
         Tag tag = {tagName, tagProperty, content, tagHeight};
         tags_.push_back(tag);
-        //单标签
+        //Single Tag
         if (text[tagHeadEnd - 1] == FORWARD_SLASH)
         {
             text = text.substr(tagHeadEnd + 1, text.size() - 1);
-            ParserXml(text, tagHeight);
-        //双标签
+            parseXml(text, tagHeight);
+        //Double Tag
         } else {
             string tagEnd;
             tagEnd.push_back(LEFT_ANGLE_BRACKET);
@@ -71,8 +53,8 @@ void XmlParser::ParserXml(string text, int tagHeight)
                 int forwardTextStart = text.find(LEFT_ANGLE_BRACKET, tagHeadEnd);
                 string forwardText = text.substr(forwardTextStart, tagEndPos - forwardTextStart);
                 string backText = text.substr(tagEndPos + tagEnd.size(), text.size() - 1);
-                if (forwardText != "") ParserXml(forwardText, tagHeight + 1);
-                if (backText != "") ParserXml(backText, tagHeight);
+                if (forwardText != "") parseXml(forwardText, tagHeight + 1);
+                if (backText != "") parseXml(backText, tagHeight);
             }
         }
     }
@@ -91,6 +73,25 @@ void XmlParser::printTreeStruct()
         }
         cout << offset << tag.tagName + properties + COLON << tag.content << "\n";
     }
+}
+
+string XmlParser::readXmlFileToString(string filePath)
+{
+    ifstream file;
+    file.open(filePath);
+
+    string result;
+    string readLine;
+    while (getline(file, readLine))
+    {
+        int start = readLine.find_first_not_of(WHITE_SPACE);
+        int end = readLine.find_last_not_of(WHITE_SPACE);
+        string invalidLine = readLine.substr(start, end - start + 1);
+        result += invalidLine;
+    }
+    file.close();
+
+    return result;
 }
 
 string XmlParser::getTagName(string text)

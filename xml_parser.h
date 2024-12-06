@@ -5,23 +5,31 @@
 
 using namespace std;
 
-struct Tag;
+struct Tag
+{
+    string tagName;
+    vector<string> tagProperty;
+    string content;
+    int height;
+};
 
 class XmlParser
 {
 public:
-    XmlParser();
+    XmlParser(string filePath);
     ~XmlParser();
 
-    string readXmlFileToString(string filePath);
-    void ParserXml(string text, int tagHeight = 0);
+    vector<Tag> getXmlTags();
     void printTreeStruct();
 
 private:
+    void parseXml(string text, int tagHeight = 0);
+    string readXmlFileToString(string filePath);
     string getTagName(string text);
     vector<string> getTagProperty(string text);
     string getTagContent(string text);
 
+    string filePath_;
     vector<string> tagProperty_ {"id", "data"};
     vector<Tag> tags_;
 };
