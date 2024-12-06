@@ -1,8 +1,8 @@
-#include "xml_parser.h"
+#include "zhml_parser.h"
 
 int main()
 {
-    XmlParser xml("test/test0.xml");
-    xml.printTreeStruct();
-    vector<Tag> tags = xml.getXmlTags();
+    ZhmlParser zhml("test/test.zhml");
+    zhml.printTreeStruct();
+    vector<Tag> tags = zhml.getZhmlTags();
 }

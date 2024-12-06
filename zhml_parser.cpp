@@ -1,4 +1,4 @@
-﻿#include "xml_parser.h"
+﻿#include "zhml_parser.h"
 
 const char LEFT_ANGLE_BRACKET = '<';
 const char RIGHT_ANGLE_BRACKET = '>';
@@ -10,20 +10,20 @@ const char UNDERLINE = '_';
 const char COLON = ':';
 const string WHITE_SPACE = " \t\r\n";
 
-XmlParser::XmlParser(string filePath) {
+ZhmlParser::ZhmlParser(string filePath) {
     filePath_ = filePath;
-    string text = readXmlFileToString(filePath_);
-    parseXml(text);
+    string text = readZhmlFileToString(filePath_);
+    parseZhml(text);
 }
 
-XmlParser::~XmlParser() {}
+ZhmlParser::~ZhmlParser() {}
 
-vector<Tag> XmlParser::getXmlTags() 
+vector<Tag> ZhmlParser::getZhmlTags() 
 {
     return tags_;
 }
 
-void XmlParser::parseXml(string text, int tagHeight)
+void ZhmlParser::parseZhml(string text, int tagHeight)
 {
     int tagHeadStart = text.find(LEFT_ANGLE_BRACKET, 0);
     int tagHeadEnd = text.find(RIGHT_ANGLE_BRACKET, 0);
@@ -39,7 +39,7 @@ void XmlParser::parseXml(string text, int tagHeight)
         if (text[tagHeadEnd - 1] == FORWARD_SLASH)
         {
             text = text.substr(tagHeadEnd + 1, text.size() - 1);
-            parseXml(text, tagHeight);
+            parseZhml(text, tagHeight);
         //Double Tag
         } else {
             string tagEnd;
@@ -53,14 +53,14 @@ void XmlParser::parseXml(string text, int tagHeight)
                 int forwardTextStart = text.find(LEFT_ANGLE_BRACKET, tagHeadEnd);
                 string forwardText = text.substr(forwardTextStart, tagEndPos - forwardTextStart);
                 string backText = text.substr(tagEndPos + tagEnd.size(), text.size() - 1);
-                if (forwardText != "") parseXml(forwardText, tagHeight + 1);
-                if (backText != "") parseXml(backText, tagHeight);
+                if (forwardText != "") parseZhml(forwardText, tagHeight + 1);
+                if (backText != "") parseZhml(backText, tagHeight);
             }
         }
     }
 }
 
-void XmlParser::printTreeStruct()
+void ZhmlParser::printTreeStruct()
 {
     for(Tag tag : tags_) {
         string offset;
@@ -71,11 +71,13 @@ void XmlParser::printTreeStruct()
                 properties += UNDERLINE + property;
             }
         }
-        cout << offset << tag.tagName + properties + COLON << tag.content << "\n";
+  
+        if(tag.content != "") cout << offset + tag.tagName + properties + COLON << SPACE + tag.content << endl;
+        else cout << offset + tag.tagName + properties << endl;
     }
 }
 
-string XmlParser::readXmlFileToString(string filePath)
+string ZhmlParser::readZhmlFileToString(string filePath)
 {
     ifstream file;
     file.open(filePath);
@@ -86,7 +88,7 @@ string XmlParser::readXmlFileToString(string filePath)
     {
         int start = readLine.find_first_not_of(WHITE_SPACE);
         int end = readLine.find_last_not_of(WHITE_SPACE);
-        string invalidLine = readLine.substr(start, end - start + 1);
+        string invalidLine = readLine[start] != '#' ? readLine.substr(start, end - start + 1) : "";
         result += invalidLine;
     }
     file.close();
@@ -94,7 +96,7 @@ string XmlParser::readXmlFileToString(string filePath)
     return result;
 }
 
-string XmlParser::getTagName(string text)
+string ZhmlParser::getTagName(string text)
 {
     int startPos = 0, endPos = 0;
     for (int tagHeadStart = 0; tagHeadStart < text.size(); tagHeadStart++) {
@@ -112,7 +114,7 @@ string XmlParser::getTagName(string text)
     return text.substr(startPos, endPos - startPos);
 }
 
-vector<string> XmlParser::getTagProperty(string text)
+vector<string> ZhmlParser::getTagProperty(string text)
 {
     vector<string> properties(tagProperty_.size());
     for (int p = 0; p < tagProperty_.size(); p++) {
@@ -127,7 +129,7 @@ vector<string> XmlParser::getTagProperty(string text)
     return properties;
 }
 
-string XmlParser::getTagContent(string text)
+string ZhmlParser::getTagContent(string text)
 {
     int tagHeadEnd = text.find(RIGHT_ANGLE_BRACKET, 0);
     int nextHeadPos = text.find(LEFT_ANGLE_BRACKET, tagHeadEnd);

@@ -13,18 +13,18 @@ struct Tag
     int height;
 };
 
-class XmlParser
+class ZhmlParser
 {
 public:
-    XmlParser(string filePath);
-    ~XmlParser();
+    ZhmlParser(string filePath);
+    ~ZhmlParser();
 
-    vector<Tag> getXmlTags();
+    vector<Tag> getZhmlTags();
     void printTreeStruct();
 
 private:
-    void parseXml(string text, int tagHeight = 0);
-    string readXmlFileToString(string filePath);
+    void parseZhml(string text, int tagHeight = 0);
+    string readZhmlFileToString(string filePath);
     string getTagName(string text);
     vector<string> getTagProperty(string text);
     string getTagContent(string text);

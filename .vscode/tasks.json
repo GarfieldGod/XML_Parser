@@ -1,19 +1,19 @@
 {
     "tasks": [
         {
-            "label": "XmlParser Build",
+            "label": "ZhmlParser Build",
             "type": "cppbuild",
             "command": "g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "xml_parser.cpp",
+                "zhml_parser.cpp",
                 "main.cpp",
                 "-o",
-                "${fileDirname}\\build\\Debug\\Debug.exe"
+                "${workspaceFolder}\\build\\Debug\\Debug.exe"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"
@@ -22,18 +22,18 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "XmlParser Build"
+            "detail": "ZhmlParser Build"
         },
         {
-            "label": "XmlParser Release",
+            "label": "ZhmlParser Release",
             "type": "shell",
             "command": "g++",
             "args": [
                 "-O2",
                 "-s",
                 "-o",
-                "${fileDirname}\\build\\Release\\XmlParser.exe",
-                "xml_parser.cpp",
+                "${workspaceFolder}\\build\\Release\\ZhmlParser.exe",
+                "zhml_parser.cpp",
                 "main.cpp",
             ],
             "options": {
@@ -46,7 +46,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "XmlParser Release"
+            "detail": "ZhmlParser Release"
         }
     ],
     "version": "2.0.0"

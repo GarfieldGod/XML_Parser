@@ -2,18 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "XmlParser Debug",
+      "name": "ZhmlParser Debug",
       "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
       "cwd": "${cwd}",
-      //"program": "${cwd}/build/Debug/${fileBasenameNoExtension}.exe",
-      "program": "${cwd}/build/Debug/Debug.exe",
+      //"program": "${workspaceFolder}/build/Debug/${fileBasenameNoExtension}.exe",
+      "program": "${workspaceFolder}/build/Debug/Debug.exe",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
-      "preLaunchTask": "XmlParser Build",
+      "preLaunchTask": "ZhmlParser Build",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",

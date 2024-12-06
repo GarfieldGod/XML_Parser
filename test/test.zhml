@@ -1,0 +1,30 @@
+<note>
+    #<Head>Test for lzhml.</Head>
+    <title>Letters for someone.</title>
+    <date id="1">
+        <day>30</day>
+        <month>04</month>
+        <year>2020</year>
+    </date>
+    <date id="2">
+        <day>30</day>
+        <month>04</month>
+        <year>2021</year>
+    </date>
+    <date id="3">
+        <day>30</day>
+        <month>04</month>
+        <year>2022</year>
+    </date>
+        <date id="3">
+        <day>30</day>
+        <month>04</month>
+        <year><omit data="..."></year>
+    </date>
+    <omit data="..."/>
+    <content>Happy birthday!</content>
+    <to>The one I loved for a long time.</to>
+    <from>Lzh</from>
+    <back data="Reminder"/>
+    <body>Don't forget me.</body>
+</note>
